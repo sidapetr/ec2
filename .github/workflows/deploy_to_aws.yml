@@ -93,7 +93,9 @@ jobs:
           npm run test -- --colors
 
   Ansible:
-    needs: [Deploy, Test]
+    needs:
+      - Deploy
+      - Test
     runs-on: ubuntu-latest
 
     steps:
@@ -116,7 +118,7 @@ jobs:
           # Optional, SSH known hosts file content
       #    known_hosts: .known_hosts
           # Optional, encrypted vault password
-      #    vault_password: ${{secrets.VAULT_PASSWORD}}
+          vault_password: ${{secrets.VAULT_PASSWORD}}
           # Optional, galaxy requirements filepath
       #    requirements: galaxy-requirements.yml
           # Optional, additional flags to pass to ansible-playbook
