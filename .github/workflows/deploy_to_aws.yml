@@ -100,22 +100,22 @@ jobs:
 
     steps:
       - name: launch ec2
-        #TODO
+        run: echo TODO
 
       - name: connect to ec2
-        #TODO
+        run: echo TODO
 
       - name: install git
         run: sudo yum install git
 
       - name: transfer ansible files
-        #TODO
+        run: echo TODO
 
       - name: install dependencies
         run: pip3 install ansible boto boto3
 
       - name: create vault
-        #TODO
+        run:  echo TODO
 
       - name: run playbook
         run: ansible-playbook deploy.yml #--vault
