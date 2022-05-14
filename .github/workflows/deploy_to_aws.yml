@@ -97,7 +97,6 @@ jobs:
       - Build
       - Test
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/master' }}
 
     steps:
       - name: Git Checkout
