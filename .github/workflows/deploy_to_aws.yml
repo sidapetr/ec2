@@ -103,7 +103,7 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Required, playbook filepath - tady budou ansible commandy
-          playbook: ../../deploy.yml
+          playbook: ec2/deploy.yml
           # Optional, directory where playbooks live
       #    directory: ./
           # Optional, SSH private key
@@ -122,8 +122,9 @@ jobs:
           # Optional, galaxy requirements filepath
       #    requirements: galaxy-requirements.yml
           # Optional, additional flags to pass to ansible-playbook
-      #    options: |
-      #      --inventory .hosts
-      #      --limit group1
-      #      --extra-vars hello=there
-      #      --verbose
+          options: |
+            --verbose
+          #další nepoužité options
+    #      --inventory .hosts
+    #      --limit group1
+    #      --extra-vars hello=there
