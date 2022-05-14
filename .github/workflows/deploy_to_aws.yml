@@ -99,14 +99,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: launch ec2
+        #TODO
+
+      - name: connect to ec2
+        #TODO
+
+      - name: install git
+        run: sudo yum install git
+
+      - name: transfer ansible files
+        #TODO
+
       - name: install dependencies
         run: pip3 install ansible boto boto3
 
-      - name: list directory
-        run: ls -la
+      - name: create vault
+        #TODO
 
-      - name: execute playbook
-        run: ansible-playbook sidapetr/ec2/deploy.yml
+      - name: run playbook
+        run: ansible-playbook deploy.yml #--vault
 
 
 
