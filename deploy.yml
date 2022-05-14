@@ -1,0 +1,72 @@
+- name: Create new EC2 instance
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Launch EC2 Instance
+      ec2:
+        instance_type: t2.micro
+        image: ami-03ededff12e34e59e                #meni se
+        region: us-east-1
+        key_name: devops                            #vygenerovat
+        vpc_subnet_id: subnet-025bafbee84e7d731     #meni se
+        assign_public_ip: yes
+        wait: yes
+        count: 1
+        group: eshop                                #vytvorit
+        aws_access_key: "{{access_key}}"
+        aws_secret_key: "{{secret_key}}"
+        security_token: "{{session_token}}"
+      register: ec2
+    - name: Add instance host to group
+      add_host:
+        hostname: "{{ item.public_ip }}"
+        groupname: launched
+      loop: "{{ ec2.instances }}"
+
+    - name: Wait for ssh connection
+      delegate_to: "{{ item.public_ip }}"
+      wait_for_connection:
+        delay: 30
+        timeout: 300
+      loop: "{{ ec2.instances }}"
+
+- name: Configure EC2
+  hosts: launched
+  connection: ssh
+
+  tasks:
+    - name: Install Git and Docker
+      yum:
+        name:
+          - git
+          - docker
+        state: latest
+        update_cache: yes
+      become: yes
+    - service:
+        name: docker
+        state: started
+        enabled: yes
+      become: yes
+    - name: Start Docker on startup
+      shell: systemctl enable docker
+      become: yes
+    - name: Set rights to Docker
+      shell: usermod -a -G docker ec2-user
+      become: yes
+    - name: Get eshop from GIT
+      git:
+        repo: 'https://github.com/sidapetr/4IT572_ec2.git'
+        dest: ./app
+    - name: Build Docker with e-shop
+      shell: cd app && docker build -t myeshop:latest .
+      become: yes
+    - name: Run Docker with eshop
+      shell: docker run -p 80:3000 myeshop
+      async: 45
+      poll: 0
+      become: yes
+    - wait_for:
+        port:
+          80

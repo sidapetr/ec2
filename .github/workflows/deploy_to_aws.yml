@@ -93,7 +93,7 @@ jobs:
           npm run test -- --colors
 
   Ansible:
-    needs: Deploy, Test
+    needs: [Deploy, Test]
     runs-on: ubuntu-latest
 
     steps:
