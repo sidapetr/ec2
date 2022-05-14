@@ -99,11 +99,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v2
-        with:
+      - name: install dependencies
+        run: pip3 install ansible boto boto3
+
+
+
+
+    #  - name: Run playbook
+    #    uses: dawidd6/action-ansible-playbook@v2
+    #    with:
           # Required, playbook filepath - tady budou ansible commandy
-          playbook: sidapetr/ec2/deploy.yml
+    #      playbook: sidapetr/ec2/deploy.yml
           # Optional, directory where playbooks live
       #    directory: ./
           # Optional, SSH private key
@@ -118,12 +124,12 @@ jobs:
           # Optional, SSH known hosts file content
       #    known_hosts: .known_hosts
           # Optional, encrypted vault password
-          vault_password: ${{secrets.VAULT_PASSWORD}}
+    #      vault_password: ${{secrets.VAULT_PASSWORD}}
           # Optional, galaxy requirements filepath
       #    requirements: galaxy-requirements.yml
           # Optional, additional flags to pass to ansible-playbook
-          options: |
-            --verbose
+    #      options: |
+    #        --verbose
           #další nepoužité options
     #      --inventory .hosts
     #      --limit group1
