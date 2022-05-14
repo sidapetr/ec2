@@ -101,6 +101,8 @@ jobs:
     steps:
       - name: install dependencies
         run: pip3 install ansible boto boto3
+
+      - name: install dependencies
         run: ansible-playbook deploy.yml
 
 
