@@ -1,0 +1,127 @@
+name: Push-to-EC2
+
+on:
+  workflow_dispatch:        #zakomentovat při odevzdávání, umožní spustit manuálně
+  push:
+  #  branches:              #odkomentovat při odevzdávání po otestovani
+  #    - main               #odkomentovat při odevzdávání po otestovani
+
+jobs:
+  Install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: node_modules-
+
+      - name: Install packages with npm
+        run: |
+          npm ci
+  Build:
+    needs: Install
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Build
+        run: |
+          npm rebuild node-sass --force
+          npm run build -- --colors
+      - name: Cache node modules and build folder
+        if: ${{ github.ref == 'refs/heads/master' }}
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ./node_modules
+            ./build
+          key: ${{ runner.os }}-build-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-build-${{ github.run_id }}
+
+  Test:
+    needs: Install
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 10
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Run Tests
+        run: |
+          npm run test -- --colors
+
+  Ansible:
+    needs: Deploy, Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Required, playbook filepath - tady budou ansible commandy
+          playbook: deploy.yml
+          # Optional, directory where playbooks live
+      #    directory: ./
+          # Optional, SSH private key
+      #    key: ${{secrets.SSH_PRIVATE_KEY}}
+          # Optional, literal inventory file contents
+      #    inventory: |
+      #      [all]
+      #      example.com
+
+      #      [group1]
+      #      example.com
+          # Optional, SSH known hosts file content
+      #    known_hosts: .known_hosts
+          # Optional, encrypted vault password
+      #    vault_password: ${{secrets.VAULT_PASSWORD}}
+          # Optional, galaxy requirements filepath
+      #    requirements: galaxy-requirements.yml
+          # Optional, additional flags to pass to ansible-playbook
+      #    options: |
+      #      --inventory .hosts
+      #      --limit group1
+      #      --extra-vars hello=there
+      #      --verbose
