@@ -94,7 +94,7 @@ jobs:
 
   Ansible:
     needs:
-      - Deploy
+      - Build
       - Test
     runs-on: ubuntu-latest
 
