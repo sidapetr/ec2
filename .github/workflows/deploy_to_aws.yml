@@ -97,58 +97,28 @@ jobs:
       - Build
       - Test
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/master' }}
 
     steps:
-      - name: launch ec2
-        run: echo TODO
+      - name: Git Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
 
-      - name: connect to ec2
-        run: echo TODO
+      - name: Load node modules and build folder
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ./node_modules
+            ./build
+          key: ${{ runner.os }}-build-${{ github.run_id }}
 
-      - name: install git
-        run: sudo yum install git
-
-      - name: transfer ansible files
-        run: echo TODO
-
-      - name: install dependencies
-        run: pip3 install ansible boto boto3
-
-      - name: create vault
-        run:  echo TODO
-
-      - name: run playbook
-        run: ansible-playbook deploy.yml #--vault
-
-
-
-
-    #  - name: Run playbook
-    #    uses: dawidd6/action-ansible-playbook@v2
-    #    with:
-          # Required, playbook filepath - tady budou ansible commandy
-    #      playbook: sidapetr/ec2/deploy.yml
-          # Optional, directory where playbooks live
-      #    directory: ./
-          # Optional, SSH private key
-      #    key: ${{secrets.SSH_PRIVATE_KEY}}
-          # Optional, literal inventory file contents
-      #    inventory: |
-      #      [all]
-      #      example.com
-
-      #      [group1]
-      #      example.com
-          # Optional, SSH known hosts file content
-      #    known_hosts: .known_hosts
-          # Optional, encrypted vault password
-    #      vault_password: ${{secrets.VAULT_PASSWORD}}
-          # Optional, galaxy requirements filepath
-      #    requirements: galaxy-requirements.yml
-          # Optional, additional flags to pass to ansible-playbook
-    #      options: |
-    #        --verbose
-          #další nepoužité options
-    #      --inventory .hosts
-    #      --limit group1
-    #      --extra-vars hello=there
+      - name: Run Ansible playbook
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: deploy.yml
+          vault_password: ${{ secrets.VAULT_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: |
+            --verbose
