@@ -32,7 +32,7 @@ jobs:
   Build:
     needs: Install
     runs-on: ubuntu-latest
-tady bude chyba
+
     steps:
       - name: Git Checkout
         uses: actions/checkout@v3
@@ -73,7 +73,7 @@ tady bude chyba
       - name: Git Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          token: tenhle_token_zpusobi_chybu
 
       - name: Setup Node
         uses: actions/setup-node@v2
