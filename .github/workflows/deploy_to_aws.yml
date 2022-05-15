@@ -1,8 +1,10 @@
-name: 'Build and test our Eshop'
+name: Push-to-EC2
 
 on:
-  workflow_dispatch:
-  #push:
+  workflow_dispatch:        #zakomentovat při odevzdávání, umožní spustit manuálně
+  push:
+  #  branches:              #odkomentovat při odevzdávání po otestovani
+  #    - main               #odkomentovat při odevzdávání po otestovani
 
 jobs:
   Install:
@@ -89,3 +91,33 @@ jobs:
       - name: Run Tests
         run: |
           npm run test -- --colors
+
+  Ansible:
+    needs:
+      - Build
+      - Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Load node modules and build folder
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ./node_modules
+            ./build
+          key: ${{ runner.os }}-build-${{ github.run_id }}
+
+      - name: Run Ansible playbook
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: deploy.yml
+          vault_password: ${{ secrets.VAULT_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: |
+            --verbose
