@@ -38,7 +38,7 @@
     - name: Wait for ssh connection           #not working
       delegate_to: "{{ item.public_ip }}"
       wait_for_connection:
-        delay: 120                            #was 30
+        delay: 30                             #was 30
         timeout: 300
       loop: "{{ ec2.instances }}"
 
@@ -69,7 +69,7 @@
       become: yes
     - name: Get eshop from GIT
       git:
-        repo: 'https://github.com/sidapetr/4IT572_ec2.git'
+        repo: 'https://github.com/sidapetr/ec2.git'
         dest: ./app
     - name: Build Docker with e-shop
       shell: cd app && docker build -t myeshop:latest .
