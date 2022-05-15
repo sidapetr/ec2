@@ -35,10 +35,10 @@
         groupname: launched
       loop: "{{ ec2.instances }}"
 
-    - name: Wait for ssh connection
+    - name: Wait for ssh connection           #not working
       delegate_to: "{{ item.public_ip }}"
       wait_for_connection:
-        delay: 30
+        delay: 120                            #was 30
         timeout: 300
       loop: "{{ ec2.instances }}"
 
