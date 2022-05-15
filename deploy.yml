@@ -50,6 +50,8 @@
         wait: yes
         count: 1
         group: eshop                                #musi vygenerovat vault - OK
+        instance_tags:
+          eshop: 1
         aws_access_key: "{{access_key}}"
         aws_secret_key: "{{secret_key}}"
         security_token: "{{session_token}}"
