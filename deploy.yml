@@ -17,14 +17,14 @@
     - name: Launch EC2 Instance
       ec2:
         instance_type: t2.micro
-        image: ami-03ededff12e34e59e                #meni se
+        image: ami-03ededff12e34e59e                #nemeni se
         region: us-east-1
-        key_name: devops                            #vygenerovat
-        vpc_subnet_id: subnet-025bafbee84e7d731     #meni se
+        key_name: devops                            #vygenerovat - OK
+        vpc_subnet_id: subnet-0480f7661e4e070aa     #meni se - OK
         assign_public_ip: yes
         wait: yes
         count: 1
-        group: eshop                                #vytvorit
+        group: eshop                                #musi vygenerovat vault - OK
         aws_access_key: "{{access_key}}"
         aws_secret_key: "{{secret_key}}"
         security_token: "{{session_token}}"
