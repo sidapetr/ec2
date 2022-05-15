@@ -3,8 +3,8 @@ name: Push-to-EC2
 on:
   workflow_dispatch:        #zakomentovat při odevzdávání, umožní spustit manuálně
   push:
-  #  branches:              #odkomentovat při odevzdávání po otestovani
-  #    - main               #odkomentovat při odevzdávání po otestovani
+    branches:              #odkomentovat při odevzdávání po otestovani
+      - main               #odkomentovat při odevzdávání po otestovani
 
 jobs:
   Install:
